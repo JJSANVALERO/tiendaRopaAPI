@@ -20,7 +20,7 @@ paths:
       tags:
         - Cliente
       summary: Listado de clientes.
-      description: Optener la información de todos los clientes.
+      description: Obtener la información de todos los clientes.
       operationId: showAllClients
       parameters:
         - name: nombre
@@ -60,6 +60,85 @@ paths:
           $ref: '#/components/responses/BadRequestClient'
         500:
           $ref: '#/components/responses/InternalServerError'
+  /client/{idClient}:
+    parameters:
+      - $ref: '#/components/parameters/idClient'
+    get:
+      tags:
+        - Cliente
+      summary: Datos de un cliente.
+      description: Obtener la información de un cliente.
+      operationId: showClient
+      responses:
+        200:
+          description: Se devuelven los datos del cliente correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Cliente
+      summary: Borrar un cliente.
+      description: Borramos un cliente de la API.
+      operationId: deleteCliente
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Cliente
+      summary: Modificar un cliente.
+      description: Modifica toda la información de un cliente
+      operationId: updateClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientInPut'
+      responses:
+        200:
+          description: El cliente se ha modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        400:
+          $ref: '#/components/responses/BadRequestClient'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Cliente
+      summary: Modifica si el cliente es o no del club VIP.
+      description: Modifica el campo clubVip de un cliente ya creado.
+      operationId: updateClubClient
+      requestBody:
+        description: El valor clubVip se cambia a true o false.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchClient'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestClub'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
 
 components:
   schemas:
@@ -150,6 +229,59 @@ components:
           type: string
           description: El campo donde se produce el error.
           example: El campo nombre no puede estar vacio
+    ClientInPut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del cliente
+          example: Juan
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de cliente
+          example: 09/02/1981
+        clubVip:
+          type: boolean
+          format: boolean
+          description: pertenece o no al club VIP de la tienda
+          example: true
+        numeroPedidos:
+          type: integer
+          format: int
+          description: numero de pedidos de ese cliente
+          example: 1
+    PatchClient:
+      properties:
+        clubVip:
+          type: boolean
+          format: boolean
+          description: Pertenece o no al club VIP
+          example: true
+    BadRequestClub:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldClub'
+    ErrorFieldClub:
+      type: object
+      description: El campo clubVip debe ser true o false.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo clubVip debe ser true o false.
   responses:
     InternalServerError:
       description: Internal Server Error
@@ -166,6 +298,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BadRequestCliente'
+    ClientNotFound:
+      description: Cliente no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Cliente no encontrado"
+    NoContent:
+      description: No Content
+    BadRequestClub:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestClub'
   requestBodies:
     ClientIn:
       description: Los datos del nuevo cliente.
@@ -174,3 +323,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ClientIn'
+    ClientInPut:
+      description: Los nuevos datos de un cliente.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientInPut'
+  parameters:
+    idClient:
+      name: idClient
+      in: path
+      description: Código de cliente
+      required: true
+      schema:
+        type: number
+        format: long
