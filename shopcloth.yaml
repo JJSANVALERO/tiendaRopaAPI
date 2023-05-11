@@ -1,0 +1,1238 @@
+openapi: 3.0.1
+info:
+  title: Tienda de ropa
+  description: API es para una tienda de ropa en la cual se puede comprar por web, app o en tienda.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8085'
+tags:
+  - name: Cliente
+    description: Operaciones para realizar con los clientes
+  - name: Vendedor
+    description: Operaciones para realizar con los vendedores
+  - name: Ropa
+    description: Operaciones para realizar con la ropa
+  - name: Pedido
+    description: Operaciones para realizar con el pedido
+paths:
+  /clients:
+    get:
+      tags:
+        - Cliente
+      summary: Listado de clientes.
+      description: Obtener la información de todos los clientes.
+      operationId: showAllClients
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        200:
+          description: Se devuelve el listado de clientes correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Cliente
+      summary: Añadir un cliente
+      description: Crear un nuevo cliente.
+      operationId: addClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientIn'
+      responses:
+        201:
+          description: El cliente se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        400:
+          $ref: '#/components/responses/BadRequestClient'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /client/{idClient}:
+    parameters:
+      - $ref: '#/components/parameters/idClient'
+    get:
+      tags:
+        - Cliente
+      summary: Datos de un cliente.
+      description: Obtener la información de un cliente.
+      operationId: showClient
+      responses:
+        200:
+          description: Se devuelven los datos del cliente correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Cliente
+      summary: Borrar un cliente.
+      description: Borramos un cliente de la API.
+      operationId: deleteCliente
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Cliente
+      summary: Modificar un cliente.
+      description: Modifica toda la información de un cliente
+      operationId: updateClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientInPut'
+      responses:
+        200:
+          description: El cliente se ha modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        400:
+          $ref: '#/components/responses/BadRequestClient'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Cliente
+      summary: Modifica si el cliente es o no del club VIP.
+      description: Modifica el campo clubVip de un cliente ya creado.
+      operationId: updateClubClient
+      requestBody:
+        description: El valor clubVip se cambia a true o false.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchClient'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestClub'
+        404:
+          $ref: '#/components/responses/ClientNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /selles:
+    get:
+      tags:
+        - Vendedor
+      summary: Listado de vendedores.
+      description: Obtener la información de todos los vendedores.
+      operationId: showAllSellers
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        200:
+          description: Se devuelve el listado de vendedores correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Seller'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Vendedor
+      summary: Añadir un vendedor
+      description: Crear un nuevo vendedor.
+      operationId: addSeller
+      requestBody:
+        $ref: '#/components/requestBodies/SellerIn'
+      responses:
+        201:
+          description: El vendedor se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Seller'
+        400:
+          $ref: '#/components/responses/BadRequestSeller'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /seller/{idSeller}:
+    parameters:
+      - $ref: '#/components/parameters/idSeller'
+    get:
+      tags:
+        - Vendedor
+      summary: Datos de un vendedor.
+      description: Obtener la información de un vendedor.
+      operationId: showSeller
+      responses:
+        200:
+          description: Se devuelven los datos del vendedor correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Seller'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Vendedor
+      summary: Borrar un vendedor.
+      description: Borramos un vendedor de la API.
+      operationId: deleteSeller
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Vendedor
+      summary: Modificar un vendedor.
+      description: Modifica toda la información de un vendedor
+      operationId: updateSeller
+      requestBody:
+        $ref: '#/components/requestBodies/SellerInPut'
+      responses:
+        200:
+          description: El cliente se ha modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Seller'
+        400:
+          $ref: '#/components/responses/BadRequestSeller'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Vendedor
+      summary: Modifica si el vendedor es baja.
+      description: Modifica los campos fecha de baja y trabajador activo.
+      operationId: updateBajaSeller
+      requestBody:
+        description: Se pone la fecha de baja y se indica trabajadorActivo false.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchSeller'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestBaja'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /cloths:
+    get:
+      tags:
+        - Ropa
+      summary: Listado de ropa.
+      description: Obtener la información de toda la ropa de la tienda.
+      operationId: showAllCloth
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        200:
+          description: Se devuelve el listado de la ropa correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cloth'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Ropa
+      summary: Añadir prenda de ropa
+      description: Crear una nueva prenda de ropa.
+      operationId: addCloth
+      requestBody:
+        $ref: '#/components/requestBodies/ClothIn'
+      responses:
+        201:
+          description: El vendedor se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cloth'
+        400:
+          $ref: '#/components/responses/BadRequestCloth'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /cloth/{idCloth}:
+    parameters:
+      - $ref: '#/components/parameters/idCloth'
+    get:
+      tags:
+        - Ropa
+      summary: Datos de una prenda.
+      description: Obtener la información de una prenda de ropa.
+      operationId: showCloth
+      responses:
+        200:
+          description: Se devuelven los datos de la prenda de ropa correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cloth'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Ropa
+      summary: Borrar una prenda de ropa.
+      description: Borramos una prenda de ropa de la API.
+      operationId: deleteCloth
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Ropa
+      summary: Modificar una prenda de ropa.
+      description: Modifica toda una prenda de ropa.
+      operationId: updateCloth
+      requestBody:
+        $ref: '#/components/requestBodies/ClothInPut'
+      responses:
+        200:
+          description: El cliente se ha modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cloth'
+        400:
+          $ref: '#/components/responses/BadRequestCloth'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Ropa
+      summary: Modifica el precio de la prenda de ropa.
+      description: Modifica el precio de la prenda de ropa.
+      operationId: updatePrice
+      requestBody:
+        description: Se cambia el precio de la prenda de ropa.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCloth'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestPrice'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /orders:
+    get:
+      tags:
+        - Pedido
+      summary: Listado de todos los pedidos.
+      description: Obtener la información de todos los pedidos
+      operationId: showAllOrders
+      responses:
+        200:
+          description: Se devuelve el listado de los pedidos de forma correcta
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Pedido
+      summary: Añadir un pedido.
+      description: Crear un nuevo pedido.
+      operationId: addOrder
+      requestBody:
+        $ref: '#/components/requestBodies/OrderIn'
+      responses:
+        201:
+          description: El pedido se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /order/{idOrder}:
+    parameters:
+      - $ref: '#/components/parameters/idOrder'
+    get:
+      tags:
+        - Pedido
+      summary: Datos de un pedido.
+      description: Obtener la información de un pedido
+      operationId: showOrder
+      responses:
+        200:
+          description: Se devuelven los datos del pedido correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        404:
+          $ref: '#/components/responses/OrderNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Pedido
+      summary: Borrar un pedido.
+      description: Borramos un pedido.
+      operationId: deleteOrder
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestPagado'
+        404:
+          $ref: '#/components/responses/OrderNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Pedido
+      summary: Modificar dotos de un pedido.
+      description: Modificar toda la información de un pedido
+      operationId: updateOrder
+      requestBody:
+        $ref: '#/components/requestBodies/OrderInPut'
+      responses:
+        200:
+          description: El pedido se modifica correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        404:
+          $ref: '#/components/responses/OrderNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Pedido
+      summary: Modifica si esta o no pagado el pedido.
+      description: Modifica el campo pagado.
+      operationId: updateOrderPay
+      requestBody:
+        description: El estado del campo pagado se modifica.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchOrder'
+      responses:
+        200:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/OrderNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Client:
+      allOf:
+        - type: object
+          properties:
+            idCliente:
+              type: number
+              format: long
+              example: 2
+        - $ref: '#/components/schemas/ClientOut'
+    ClientOut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del cliente
+          example: Juan
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de cliente
+          example: 09/02/1981
+        clubVip:
+          type: boolean
+          format: boolean
+          description: pertenece o no al club VIP de la tienda
+          example: true
+        numeroPedidos:
+          type: integer
+          format: int32
+          description: numero de pedidos de ese cliente
+          example: 1
+    ErrorResponse:
+      properties:
+        errorCode:
+          type: number
+          format: int
+          example: 500
+        message:
+          type: string
+          example: Validación error
+    ClientIn:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del cliente
+          example: Juan
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de cliente
+          example: 09/02/1981
+        clubVip:
+          type: boolean
+          format: boolean
+          description: pertenece o no al club VIP de la tienda
+          example: true
+        numeroPedidos:
+          type: integer
+          format: int
+          description: numero de pedidos de ese cliente
+          example: 1
+    BadRequestCliente:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldClient'
+    ErrorFieldClient:
+      type: object
+      description: El campo nombre no puede estar vacio.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo nombre no puede estar vacio
+    ClientInPut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del cliente
+          example: Juan
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de cliente
+          example: 09/02/1981
+        clubVip:
+          type: boolean
+          format: boolean
+          description: pertenece o no al club VIP de la tienda
+          example: true
+        numeroPedidos:
+          type: integer
+          format: int
+          description: numero de pedidos de ese cliente
+          example: 1
+    PatchClient:
+      properties:
+        clubVip:
+          type: boolean
+          format: boolean
+          description: Pertenece o no al club VIP
+          example: true
+    BadRequestClub:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldClub'
+    ErrorFieldClub:
+      type: object
+      description: El campo clubVip debe ser true o false.
+      properties:
+        clubVip:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo clubVip debe ser true o false.
+    Seller:
+      allOf:
+        - type: object
+          properties:
+            idSeller:
+              type: number
+              format: long
+              example: 1
+        - $ref: '#/components/schemas/SellerOut'
+    SellerOut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del vendedor
+          example: Javier
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta del vendedor
+          example: 01/05/2023
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        sueldo:
+          type: double
+          format: double
+          description: Sueldo bruto mensual del vendedor
+          example: 1500.15
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    SellerIn:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del vendedor
+          example: Javier
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta del vendedor
+          example: 01/05/2023
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        sueldo:
+          type: double
+          format: double
+          description: Sueldo bruto mensual del vendedor
+          example: 1500.15
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    BadRequestSeller:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldSeller'
+    ErrorFieldSeller:
+      type: object
+      description: El campo nombre no puede estar vacio.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo nombre no puede estar vacio
+    SellerInPut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del vendedor
+          example: Javier
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta del vendedor
+          example: 01/05/2023
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        sueldo:
+          type: double
+          format: double
+          description: Sueldo bruto mensual del vendedor
+          example: 1500.15
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    PatchSeller:
+      properties:
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    BadRequestBaja:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldBaja'
+    ErrorFieldBaja:
+      type: object
+      description: El campo fechaBaja debe contener una fecha y trabajadorActivo debe ser true o false.
+      properties:
+        fechaBaja:
+          type: data
+          description: El campo donde se produce el error.
+          example: El campo fechaBaja no puedes estar vacio.
+        trabajadorActivo:
+          type: boolean
+          description: El campo donde se produce el error.
+          example: El campo trabajadorActivo debe ser true o false.
+    Cloth:
+      allOf:
+        - type: object
+          properties:
+            idCloth:
+              type: number
+              format: long
+              example: 2
+        - $ref: '#/components/schemas/ClothOut'
+    ClothOut:
+      type: object
+      properties:
+          nombre:
+            type: string
+            format: string
+            description: nombre de prenda de ropa
+            example: Camiseta roja
+          code:
+            type: string
+            format: string
+            description: codigo de la prenda de ropa.
+            example: 01234564879B
+          fechaAlta:
+            type: date
+            format: date
+            description: fecha de alta de la prenda
+            example: 01/05/2023
+          precio:
+            type: number
+            format: double
+            description: precio de la prenda.
+            example: 29.99
+          hayStock:
+            type: boolean
+            format: boolean
+            description: Hay stock
+            example: true
+    ClothIn:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre de prenda de ropa
+          example: Camiseta roja
+        code:
+          type: string
+          format: string
+          description: codigo de la prenda de ropa.
+          example: 01234564879B
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de la prenda
+          example: 01/05/2023
+        precio:
+          type: number
+          format: double
+          description: precio de la prenda.
+          example: 29.99
+        hayStock:
+          type: boolean
+          format: boolean
+          description: Hay stock
+          example: true
+    BadRequestCloth:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldCloth'
+    ErrorFieldCloth:
+      type: object
+      description: El campo nombre no puede estar vacio.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo nombre no puede estar vacio.
+    ClothInPut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre de prenda de ropa
+          example: Camiseta roja
+        code:
+          type: string
+          format: string
+          description: codigo de la prenda de ropa.
+          example: 01234564879B
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de la prenda
+          example: 01/05/2023
+        precio:
+          type: number
+          format: double
+          description: precio de la prenda.
+          example: 29.99
+        hayStock:
+          type: boolean
+          format: boolean
+          description: Hay stock
+          example: true
+    PatchCloth:
+      properties:
+        precio:
+          type: number
+          format: double
+          description: precio de la prenda.
+          example: 29.99
+    BadRequestPrice:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldPrice'
+    ErrorFieldPrice:
+      type: object
+      description: El campo precio no puede estár vacio.
+      properties:
+        precio:
+          type: number
+          format: double
+          description: El campo donde se produce el error.
+          example: El campo precio no puedes estar vacio.
+    Order:
+      allOf:
+        - type: object
+          properties:
+            idOrder:
+              type: number
+              format: long
+              example: 2
+            client:
+              $ref: '#/components/schemas/Client'
+            seller:
+              $ref: '#/components/schemas/Seller'
+            cloth:
+              $ref: '#/components/schemas/Cloth'
+        - $ref: '#/components/schemas/OrderOut'
+    OrderOut:
+      type: object
+      properties:
+        fechaPedido:
+          type: date
+          format: date
+          description: fecha en la que se hace el pedido
+          example: 12/05/2023
+        code:
+          type: string
+          format: code
+          description: codigo del pedido.
+          example: fec20230512num00001
+        pagado:
+          type: boolean
+          format: boolean
+          description: Si el pedido esta pagado ya o no.
+          example: false
+        valorPedido:
+          type: number
+          format: double
+          description: Valor del pedido
+          example: 29.99
+    OrderIn:
+      type: object
+      properties:
+        fechaPedido:
+          type: date
+          format: date
+          description: fecha en la que se hace el pedido
+          example: 12/05/2023
+        code:
+          type: string
+          format: code
+          description: codigo del pedido.
+          example: fec20230512num00001
+        pagado:
+          type: boolean
+          format: boolean
+          description: Si el pedido esta pagado ya o no.
+          example: false
+        valorPedido:
+          type: number
+          format: double
+          description: Valor del pedido
+          example: 29.99
+    OrderInPut:
+      type: object
+      properties:
+        fechaPedido:
+          type: date
+          format: date
+          description: fecha en la que se hace el pedido
+          example: 12/05/2023
+        code:
+          type: string
+          format: code
+          description: codigo del pedido.
+          example: fec20230512num00001
+        pagado:
+          type: boolean
+          format: boolean
+          description: Si el pedido esta pagado ya o no.
+          example: false
+        valorPedido:
+          type: number
+          format: double
+          description: Valor del pedido
+          example: 29.99
+    PatchOrder:
+      properties:
+        pagado:
+          type: boolean
+          format: boolean
+          description: Pedido pagado o no.
+          example: false
+    BadRequestPagado:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldPagado'
+    ErrorFieldPagado:
+      type: object
+      description: El campo pagado debe ser true o false.
+      properties:
+        pagado:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo pagado debe ser true o false.
+  responses:
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error code: 500
+            message: "Internal server error"
+    BadRequestClient:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestCliente'
+    ClientNotFound:
+      description: Cliente no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Cliente no encontrado"
+    NoContent:
+      description: No Content
+    BadRequestClub:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestClub'
+    BadRequestSeller:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestSeller'
+    SellerNotFound:
+      description: Vendedor no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Vendedor no encontrado"
+    BadRequestBaja:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestBaja'
+    BadRequestCloth:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestCloth'
+    ClothNotFound:
+      description: Prenda de ropa no encontrada
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Prenda de ropa no encontrada"
+    BadRequestPrice:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestPrice'
+    OrderNotFound:
+      description: Pedido no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Pedido no encontrado"
+    BadRequestPagado:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestPagado'
+  requestBodies:
+    ClientIn:
+      description: Los datos del nuevo cliente.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientIn'
+    ClientInPut:
+      description: Los nuevos datos de un cliente.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientInPut'
+    SellerIn:
+      description: Los datos del nuevo vendedor.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SellerIn'
+    SellerInPut:
+      description: Los nuevos datos de un vendedor.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SellerInPut'
+    ClothIn:
+      description: Los datos de la nueva prenda.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClothIn'
+    ClothInPut:
+      description: Los nuevos datos de la prenda de ropa.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClothInPut'
+    OrderIn:
+      description: Los datos del nuevo pedido.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderIn'
+    OrderInPut:
+      description: Los nuevos datos del pedido.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderInPut'
+  parameters:
+    idClient:
+      name: idClient
+      in: path
+      description: Código de cliente
+      required: true
+      schema:
+        type: number
+        format: long
+    idSeller:
+      name: idSeller
+      in: path
+      description: Código de vendedor
+      required: true
+      schema:
+        type: number
+        format: long
+    idCloth:
+      name: idCloth
+      in: path
+      description: Código de prenda de ropa
+      required: true
+      schema:
+        type: number
+        format: long
+    idOrder:
+      name: idOrder
+      in: path
+      description: Código Id del pedido
+      required: true
+      schema:
+        type: number
+        format: long
