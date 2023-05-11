@@ -264,6 +264,130 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
 
+  /cloth:
+    get:
+      tags:
+        - Ropa
+      summary: Listado de ropa.
+      description: Obtener la información de toda la ropa de la tienda.
+      operationId: showAllCloth
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        200:
+          description: Se devuelve el listado de la ropa correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cloth'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Ropa
+      summary: Añadir prenda de ropa
+      description: Crear una nueva prenda de ropa.
+      operationId: addCloth
+      requestBody:
+        $ref: '#/components/requestBodies/ClothIn'
+      responses:
+        201:
+          description: El vendedor se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cloth'
+        400:
+          $ref: '#/components/responses/BadRequestCloth'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /cloth/{idCloth}:
+    parameters:
+      - $ref: '#/components/parameters/idCloth'
+    get:
+      tags:
+        - Ropa
+      summary: Datos de una prenda.
+      description: Obtener la información de una prenda de ropa.
+      operationId: showCloth
+      responses:
+        200:
+          description: Se devuelven los datos de la prenda de ropa correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cloth'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Ropa
+      summary: Borrar una prenda de ropa.
+      description: Borramos una prenda de ropa de la API.
+      operationId: deleteCloth
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Ropa
+      summary: Modificar una prenda de ropa.
+      description: Modifica toda una prenda de ropa.
+      operationId: updateCloth
+      requestBody:
+        $ref: '#/components/requestBodies/ClothInPut'
+      responses:
+        200:
+          description: El cliente se ha modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cloth'
+        400:
+          $ref: '#/components/responses/BadRequestCloth'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Ropa
+      summary: Modifica el precio de la prenda de ropa.
+      description: Modifica el precio de la prenda de ropa.
+      operationId: updatePrice
+      requestBody:
+        description: Se cambia el precio de la prenda de ropa.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchCloth'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestPrice'
+        404:
+          $ref: '#/components/responses/ClothNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   schemas:
     Client:
@@ -561,7 +685,138 @@ components:
           type: boolean
           description: El campo donde se produce el error.
           example: El campo trabajadorActivo debe ser true o false.
-
+    Cloth:
+      allOf:
+        - type: object
+          properties:
+            idCloth:
+              type: number
+              format: long
+              example: 2
+        - $ref: '#/components/schemas/ClothOut'
+    ClothOut:
+      type: object
+      properties:
+          nombre:
+            type: string
+            format: string
+            description: nombre de prenda de ropa
+            example: Camiseta roja
+          fechaAlta:
+            type: date
+            format: date
+            description: fecha de alta de la prenda
+            example: 01/05/2023
+          precio:
+            type: number
+            format: double
+            description: precio de la prenda.
+            example: 29.99
+          hayStock:
+            type: boolean
+            format: boolean
+            description: Hay stock
+            example: true
+    ClothIn:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre de prenda de ropa
+          example: Camiseta roja
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de la prenda
+          example: 01/05/2023
+        precio:
+          type: number
+          format: double
+          description: precio de la prenda.
+          example: 29.99
+        hayStock:
+          type: boolean
+          format: boolean
+          description: Hay stock
+          example: true
+    BadRequestCloth:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldCloth'
+    ErrorFieldCloth:
+      type: object
+      description: El campo nombre no puede estar vacio.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo nombre no puede estar vacio.
+    ClothInPut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre de prenda de ropa
+          example: Camiseta roja
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de la prenda
+          example: 01/05/2023
+        precio:
+          type: number
+          format: double
+          description: precio de la prenda.
+          example: 29.99
+        hayStock:
+          type: boolean
+          format: boolean
+          description: Hay stock
+          example: true
+    PatchCloth:
+      properties:
+        precio:
+          type: number
+          format: double
+          description: precio de la prenda.
+          example: 29.99
+    BadRequestPrice:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldPrice'
+    ErrorFieldPrice:
+      type: object
+      description: El campo precio no puede estár vacio.
+      properties:
+        precio:
+          type: number
+          format: double
+          description: El campo donde se produce el error.
+          example: El campo precio no puedes estar vacio.
   responses:
     InternalServerError:
       description: Internal Server Error
@@ -616,6 +871,27 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BadRequestBaja'
+    BadRequestCloth:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestCloth'
+    ClothNotFound:
+      description: Prenda de ropa no encontrada
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Prenda de ropa no encontrada"
+    BadRequestPrice:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestPrice'
 
   requestBodies:
     ClientIn:
@@ -646,8 +922,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SellerInPut'
-
-
+    ClothIn:
+      description: Los datos de la nueva prenda.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClothIn'
+    ClothInPut:
+      description: Los nuevos datos de la prenda de ropa.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClothInPut'
 
   parameters:
     idClient:
@@ -662,6 +950,14 @@ components:
       name: idSeller
       in: path
       description: Código de vendedor
+      required: true
+      schema:
+        type: number
+        format: long
+    idCloth:
+      name: idCloth
+      in: path
+      description: Código de prenda de ropa
       required: true
       schema:
         type: number
