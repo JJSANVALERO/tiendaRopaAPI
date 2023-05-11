@@ -41,8 +41,136 @@ paths:
                   $ref: '#/components/schemas/Client'
         500:
           $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Cliente
+      summary: Añadir un cliente
+      description: Crear un nuevo cliente.
+      operationId: addClient
+      requestBody:
+        $ref: '#/components/requestBodies/ClientIn'
+      responses:
+        201:
+          description: El cliente se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        400:
+          $ref: '#/components/responses/BadRequestClient'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   schemas:
     Client:
+      allOf:
+        - type: object
+          properties:
+            idCliente:
+              type: number
+              format: long
+              example: 2
+        - $ref: '#/components/schemas/ClientOut'
+    ClientOut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del cliente
+          example: Juan
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de cliente
+          example: 09/02/1981
+        clubVip:
+          type: boolean
+          format: boolean
+          description: pertenece o no al club VIP de la tienda
+          example: true
+        numeroPedidos:
+          type: integer
+          format: int32
+          description: numero de pedidos de ese cliente
+          example: 1
+    ErrorResponse:
+      properties:
+        errorCode:
+          type: number
+          format: int
+          example: 500
+        message:
+          type: string
+          example: Validación error
+    ClientIn:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del cliente
+          example: Juan
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta de cliente
+          example: 09/02/1981
+        clubVip:
+          type: boolean
+          format: boolean
+          description: pertenece o no al club VIP de la tienda
+          example: true
+        numeroPedidos:
+          type: integer
+          format: int
+          description: numero de pedidos de ese cliente
+          example: 1
+    BadRequestCliente:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldClient'
+    ErrorFieldClient:
+      type: object
+      description: El campo nombre no puede estar vacio.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo nombre no puede estar vacio
   responses:
     InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error code: 500
+            message: "Internal server error"
+    BadRequestClient:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestCliente'
+  requestBodies:
+    ClientIn:
+      description: Los datos del nuevo cliente.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClientIn'
