@@ -1,0 +1,48 @@
+openapi: 3.0.1
+info:
+  title: Tienda de ropa
+  description: API es para una tienda de ropa en la cual se puede comprar por web, app o en tienda.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8085'
+tags:
+  - name: Cliente
+    description: Operaciones para realizar con los clientes
+  - name: Vendedor
+    description: Operaciones para realizar con los vendedores
+  - name: Ropa
+    description: Operaciones para realizar con la ropa
+  - name: Pedido
+    description: Operaciones para realizar con el pedido
+paths:
+  /client:
+    get:
+      tags:
+        - Cliente
+      summary: Listado de clientes.
+      description: Optener la información de todos los clientes.
+      operationId: showAllClients
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        200:
+          description: Se devuelve el listado de clientes correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Client:
+  responses:
+    InternalServerError:
