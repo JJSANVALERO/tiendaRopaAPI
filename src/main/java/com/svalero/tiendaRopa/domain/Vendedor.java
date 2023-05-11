@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,23 +12,25 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "cliente")
-public class Cliente {
+@Entity(name = "vendedor")
+public class Vendedor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idCliente;
+    private long idVendedor;
     @Column
     private String nombre;
     @Column
     private LocalDate fechaAlta;
     @Column
-    private Boolean clubVip;
+    private LocalDate fechaBaja;
     @Column
-    private int numeroPedidos;
+    private double sueldo;
+    @Column
+    private Boolean trabajadorActivo;
 
-    @OneToMany(mappedBy = "cliente")
-    @JsonBackReference(value = "cliente_pedidos")
+    @OneToMany(mappedBy = "vendedor")
+    @JsonBackReference(value = "vendedor_pedidos")
     private List<Pedido> pedidos;
 
 
