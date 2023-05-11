@@ -139,6 +139,130 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 
+  /seller:
+    get:
+      tags:
+        - Vendedor
+      summary: Listado de vendedores.
+      description: Obtener la información de todos los vendedores.
+      operationId: showAllSellers
+      parameters:
+        - name: nombre
+          in: query
+          description: Filtro por nombre
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        200:
+          description: Se devuelve el listado de vendedores correctamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Seller'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Vendedor
+      summary: Añadir un vendedor
+      description: Crear un nuevo vendedor.
+      operationId: addSeller
+      requestBody:
+        $ref: '#/components/requestBodies/SellerIn'
+      responses:
+        201:
+          description: El vendedor se registra correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Seller'
+        400:
+          $ref: '#/components/responses/BadRequestSeller'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /seller/{idSeller}:
+    parameters:
+      - $ref: '#/components/parameters/idSeller'
+    get:
+      tags:
+        - Vendedor
+      summary: Datos de un vendedor.
+      description: Obtener la información de un vendedor.
+      operationId: showSeller
+      responses:
+        200:
+          description: Se devuelven los datos del vendedor correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Seller'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Vendedor
+      summary: Borrar un vendedor.
+      description: Borramos un vendedor de la API.
+      operationId: deleteSeller
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Vendedor
+      summary: Modificar un vendedor.
+      description: Modifica toda la información de un vendedor
+      operationId: updateSeller
+      requestBody:
+        $ref: '#/components/requestBodies/SellerInPut'
+      responses:
+        200:
+          description: El cliente se ha modificado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Seller'
+        400:
+          $ref: '#/components/responses/BadRequestSeller'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Vendedor
+      summary: Modifica si el vendedor es baja.
+      description: Modifica los campos fecha de baja y trabajador activo.
+      operationId: updateBajaSeller
+      requestBody:
+        description: Se pone la fecha de baja y se indica trabajadorActivo false.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchSeller'
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        400:
+          $ref: '#/components/responses/BadRequestBaja'
+        404:
+          $ref: '#/components/responses/SellerNotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
 
 components:
   schemas:
@@ -278,10 +402,166 @@ components:
       type: object
       description: El campo clubVip debe ser true o false.
       properties:
-        nombre:
+        clubVip:
           type: string
           description: El campo donde se produce el error.
           example: El campo clubVip debe ser true o false.
+    Seller:
+      allOf:
+        - type: object
+          properties:
+            idSeller:
+              type: number
+              format: long
+              example: 1
+        - $ref: '#/components/schemas/SellerOut'
+    SellerOut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del vendedor
+          example: Javier
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta del vendedor
+          example: 01/05/2023
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        sueldo:
+          type: double
+          format: double
+          description: Sueldo bruto mensual del vendedor
+          example: 1500.15
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    SellerIn:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del vendedor
+          example: Javier
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta del vendedor
+          example: 01/05/2023
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        sueldo:
+          type: double
+          format: double
+          description: Sueldo bruto mensual del vendedor
+          example: 1500.15
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    BadRequestSeller:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldSeller'
+    ErrorFieldSeller:
+      type: object
+      description: El campo nombre no puede estar vacio.
+      properties:
+        nombre:
+          type: string
+          description: El campo donde se produce el error.
+          example: El campo nombre no puede estar vacio
+    SellerInPut:
+      type: object
+      properties:
+        nombre:
+          type: string
+          format: string
+          description: nombre del vendedor
+          example: Javier
+        fechaAlta:
+          type: date
+          format: date
+          description: fecha de alta del vendedor
+          example: 01/05/2023
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        sueldo:
+          type: double
+          format: double
+          description: Sueldo bruto mensual del vendedor
+          example: 1500.15
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    PatchSeller:
+      properties:
+        fechaBaja:
+          type: date
+          format: date
+          description: fecha de baja del vendedor
+          example: 02/05/2023
+        trabajadorActivo:
+          type: boolean
+          format: boolean
+          description: Trabajador en activo o no.
+          example: false
+    BadRequestBaja:
+      type: object
+      properties:
+        code:
+          type: string
+          description: código de estado
+          example: 400
+        message:
+          type: string
+          description: Error de validación.
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorFieldBaja'
+    ErrorFieldBaja:
+      type: object
+      description: El campo fechaBaja debe contener una fecha y trabajadorActivo debe ser true o false.
+      properties:
+        fechaBaja:
+          type: data
+          description: El campo donde se produce el error.
+          example: El campo fechaBaja no puedes estar vacio.
+        trabajadorActivo:
+          type: boolean
+          description: El campo donde se produce el error.
+          example: El campo trabajadorActivo debe ser true o false.
+
   responses:
     InternalServerError:
       description: Internal Server Error
@@ -315,6 +595,28 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BadRequestClub'
+    BadRequestSeller:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestSeller'
+    SellerNotFound:
+      description: Vendedor no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 404
+            message: "Vendedor no encontrado"
+    BadRequestBaja:
+      description: Error de validación.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestBaja'
+
   requestBodies:
     ClientIn:
       description: Los datos del nuevo cliente.
@@ -330,11 +632,36 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ClientInPut'
+    SellerIn:
+      description: Los datos del nuevo vendedor.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SellerIn'
+    SellerInPut:
+      description: Los nuevos datos de un vendedor.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SellerInPut'
+
+
+
   parameters:
     idClient:
       name: idClient
       in: path
       description: Código de cliente
+      required: true
+      schema:
+        type: number
+        format: long
+    idSeller:
+      name: idSeller
+      in: path
+      description: Código de vendedor
       required: true
       schema:
         type: number
