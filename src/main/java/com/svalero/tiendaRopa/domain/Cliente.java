@@ -24,6 +24,7 @@ public class Cliente {
     @Column
     private LocalDate fechaAlta;
     @Column
+    @NonNull
     private Boolean clubVip;
     @Column
     private int numeroPedidos;

@@ -5,9 +5,10 @@ import com.svalero.tiendaRopa.exception.RopaNotFoundException;
 import com.svalero.tiendaRopa.repository.RopaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class RopaServiceImpl implements RopaService{
 
     @Autowired

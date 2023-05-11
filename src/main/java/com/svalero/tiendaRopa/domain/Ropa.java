@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class Ropa {
     @Column
     private double precio;
     @Column
+    @NonNull
     private Boolean hayStock;
 
     @ManyToMany
