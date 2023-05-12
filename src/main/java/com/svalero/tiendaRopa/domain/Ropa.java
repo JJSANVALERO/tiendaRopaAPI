@@ -1,5 +1,6 @@
 package com.svalero.tiendaRopa.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,9 +33,13 @@ public class Ropa {
     @NonNull
     private Boolean hayStock;
 
-    @ManyToMany
-    @JoinTable(name = "ropas_pedidos",
-        joinColumns = @JoinColumn(name = "ropa_id"),
-        inverseJoinColumns = @JoinColumn(name = "pedido_id"))
-    private List<Pedido> pedidos = new ArrayList<Pedido>();
+    @ManyToMany(mappedBy = "ropas")
+    @JsonBackReference(value = "pedido_id")
+    private List<Pedido> pedidos;
+
+//    @ManyToMany
+//    @JoinTable(name = "ropas_pedidos",
+//        joinColumns = @JoinColumn(name = "ropa_id"),
+//        inverseJoinColumns = @JoinColumn(name = "pedido_id"))
+//    private List<Pedido> pedidos = new ArrayList<Pedido>();
 }

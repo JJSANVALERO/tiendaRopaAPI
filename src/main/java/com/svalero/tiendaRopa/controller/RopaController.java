@@ -47,4 +47,16 @@ public class RopaController {
         ropaService.borrarRopa(idRopa);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/ropa/{idRopa}")
+    public ResponseEntity<Ropa> modificarRopa(@PathVariable long idRopa, @RequestBody Ropa ropa) throws RopaNotFoundException {
+        Ropa ropaModificada = ropaService.modificarRopa(idRopa,ropa);
+        return ResponseEntity.status(HttpStatus.OK).body(ropaModificada);
+    }
+
+    @PatchMapping("/ropa/{idRopa}")
+    public ResponseEntity<Ropa> modificarPrecio(@PathVariable long idRopa, @RequestBody Ropa ropa) throws RopaNotFoundException {
+        Ropa ropaModificada = ropaService.modificarPrecioRopa(idRopa, ropa);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -37,7 +38,13 @@ public class Pedido {
     @JoinColumn(name = "vendedor_id")
     private Vendedor vendedor;
 
-    @ManyToMany(mappedBy = "pedidos")
-    @JsonBackReference(value = "ropa_id")
-    private List<Ropa> ropas;
+    @ManyToMany
+    @JoinTable(name = "pedidos_ropas",
+        joinColumns = @JoinColumn(name = "pedido_id"),
+        inverseJoinColumns = @JoinColumn(name = "ropa_id"))
+    private List<Ropa> ropas = new ArrayList<Ropa>();
+
+//    @ManyToMany(mappedBy = "pedidos")
+//    @JsonBackReference(value = "ropa_id")
+//    private List<Ropa> ropas;
 }
