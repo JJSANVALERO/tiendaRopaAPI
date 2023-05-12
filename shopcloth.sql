@@ -1,3 +1,3 @@
 CREATE DATABASE shopcloth;
-CREATE USER myshopuser IDENTIFIED BY 'mypassword';
+CREATE USER 'myshopuser'@'localhost' IDENTIFIED BY 'mypassword';
 GRANT ALL PRIVILEGES ON shopcloth.* TO myshopuser;
