@@ -58,7 +58,7 @@ public class RopaServiceImpl implements RopaService{
         ropa.setFechaAlta(ropaModificada.getFechaAlta());
         ropa.setPrecio(ropaModificada.getPrecio());
         ropa.setHayStock(ropaModificada.getHayStock());
-        return null;
+        return ropaRepository.save(ropa);
     }
 
     @Override
